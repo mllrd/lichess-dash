@@ -1,0 +1,183 @@
+---
+title: "Дашбоард по Lichess"
+format: dashboard
+editor: visual
+---
+
+```{r}
+library(jsonlite)
+library(tidyverse)
+df <- read_csv(Sys.getenv("PATH_DATASET_CSV"))
+df1 <- df  |> filter(name==Sys.getenv("PLAYER_ONE"))
+df2 <- df |> filter(name==Sys.getenv("PLAYER_TWO"))
+```
+
+# Player One
+
+## Row
+
+```{r}
+#| content: valuebox
+#| title: "Рейтинг"
+
+
+list(
+  color = "primary",
+  value = df1 %>% select(rp_game) %>% drop_na() %>% last() %>% as.integer()
+)
+
+```
+
+```{r}
+#| title: "Отклонение рейтинга"
+#| content: valuebox
+list(
+  color = "primary",
+  value = df1 %>% select(deviation) %>% drop_na() %>% last() %>% as.numeric()
+)      
+  
+```
+
+```{r}
+#| content: valuebox
+#| title: "Рейтинг решения задач"
+list(
+  
+  color = "primary",
+  value = df1 %>% select(rp_puzzles) %>% drop_na() %>% filter(rp_puzzles >0 ) %>% last() %>% as.integer())
+
+```
+
+```{r}
+#| content: valuebox
+#| title: "Решено задач"
+list(
+  
+  color = "primary",
+  value = df1 %>% select(win_puzzles,loss_puzzles, draw_puzzles) %>% drop_na() %>% sum()
+)
+```
+
+## Row
+
+### Column {.tabset}
+
+```{r}
+#| title: "Рейтинг"
+df1 %>% select(rp_game, dtm) %>% drop_na() %>% ggplot(aes(dtm, rp_game)) + geom_line() +
+  labs(title = "", x="", y="")
+```
+
+```{r}
+#| title: "Выигранные, проигранные партии и ничьи"
+df1 %>% select(ends_with("_game"), dtm) %>% drop_na() %>% pivot_longer(cols = c("win_game","loss_game", "draw_game"),values_to = "count") %>%
+  ggplot(aes(dtm, count, fill = name)) +
+    geom_bar(stat = "identity") +
+    theme(legend.position = "none") +
+  labs(title = "", x="", y="")
+```
+
+### Column {.tabset}
+
+```{r}
+#| title: "Рейтинг решения задач"
+df1 %>% select(rp_puzzles, dtm) %>% drop_na() %>% filter(rp_puzzles>0) %>% ggplot(aes(dtm, rp_puzzles)) + geom_line()+
+  labs(title = "", x="", y="")
+```
+
+```{r}
+#| title: "Решенные и не решенные задачи"
+df1 %>% select(ends_with("_puzzles"), dtm) %>% drop_na() %>% pivot_longer(cols = c("win_puzzles","loss_puzzles", "draw_puzzles"),values_to = "count") %>%
+  ggplot(aes(dtm, count, fill = name)) +
+    geom_bar(stat = "identity") +
+    theme(legend.position = "none") +
+  labs(title = "", x="", y="")
+```
+
+# Player Two
+
+## Row
+
+```{r}
+#| content: valuebox
+#| title: "Рейтинг"
+
+
+list(
+  color = "primary",
+  value = df2 %>% select(rp_game) %>% drop_na() %>% last() %>% as.integer()
+)
+
+```
+
+```{r}
+#| title: "Отклонение рейтинга"
+#| content: valuebox
+list(
+  color = "primary",
+  value = df2 %>% select(deviation) %>% drop_na() %>% last() %>% as.numeric()
+)      
+  
+```
+
+```{r}
+#| content: valuebox
+#| title: "Рейтинг решения задач"
+list(
+  
+  color = "primary",
+  value = df2 %>% select(rp_puzzles) %>% drop_na() %>% filter(rp_puzzles >0 ) %>% last() %>% as.integer())
+
+```
+
+```{r}
+#| content: valuebox
+#| title: "Решено задач"
+list(
+  
+  color = "primary",
+  value = df2 %>% select(win_puzzles,loss_puzzles, draw_puzzles) %>% drop_na() %>% sum()
+)
+```
+
+## Row
+
+### Column {.tabset}
+
+```{r}
+#| title: "Рейтинг"
+df2 %>% select(rp_game, dtm) %>%
+  drop_na() %>%
+  ggplot(aes(dtm, rp_game)) +
+  geom_line() +
+  labs(title = "", x="", y="")
+```
+
+```{r}
+#| title: "Выигранные, проигранные партии и ничьи"
+df2 %>% select(ends_with("_game"), dtm) %>%
+  drop_na() %>%
+  pivot_longer(cols = c("win_game","loss_game", "draw_game"),
+               values_to = "count") %>%
+  ggplot(aes(dtm, count, fill = name)) +
+    geom_bar(stat = "identity") +
+    theme(legend.position = "none") +
+  labs(title = "", x="", y="")
+```
+
+### Column {.tabset}
+
+```{r}
+#| title: "Рейтинг решения задач"
+df2 %>% select(rp_puzzles, dtm) %>% drop_na() %>% filter(rp_puzzles>0) %>% ggplot(aes(dtm, rp_puzzles)) + geom_line()+
+  labs(title = "", x="", y="")
+```
+
+```{r}
+#| title: "Решенные и не решенные задачи"
+df2 %>% select(ends_with("_puzzles"), dtm) %>% drop_na() %>% pivot_longer(cols = c("win_puzzles","loss_puzzles", "draw_puzzles"),values_to = "count") %>%
+  ggplot(aes(dtm, count, fill = name)) +
+    geom_bar(stat = "identity") +
+    theme(legend.position = "none") +
+  labs(title = "", x="", y="")
+```
