@@ -5,8 +5,11 @@ editor: visual
 ---
 
 ```{r}
-library(jsonlite)
-library(tidyverse)
+library(dplyr)
+library(readr)
+library(tidyr)
+library(ggplot2)
+
 df <- read_csv(Sys.getenv("PATH_DATASET_CSV"))
 df1 <- df  |> filter(name==Sys.getenv("PLAYER_ONE"))
 df2 <- df |> filter(name==Sys.getenv("PLAYER_TWO"))
