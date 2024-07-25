@@ -1,0 +1,4 @@
+- source: dashboard.qmd
+  quarto-pub:
+    - id: 34493df9-5d16-4554-adc1-d4f6eb40a4a0
+      url: 'https://mllrd.quarto.pub/dashboard-lichess'
