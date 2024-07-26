@@ -8,9 +8,7 @@ name: Quarto Publish
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
-    env:
-      PLAYER_ONE: ${{ secrets.PLAYER_ONE}}
-      PLAYER_TWO: ${{ secrets.PLAYER_TWO}}
+    
     steps:
       - name: Check out repository
         uses: actions/checkout@v4 
@@ -40,6 +38,9 @@ jobs:
 
       - name: Render and Publish
         uses: quarto-dev/quarto-actions/publish@v2
+        env:
+          PLAYER_ONE: ${{ secrets.PLAYER_ONE}}
+          PLAYER_TWO: ${{ secrets.PLAYER_TWO}}
         with:
           target: quarto-pub
           path: dashboard.qmd

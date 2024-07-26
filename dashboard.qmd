@@ -1,11 +1,7 @@
 ---
 title: "Дашбоард по Lichess"
 editor: visual
-format: dashboard
-params:
-   path_dt: "{{< env PATH_DATASET >}}"
-   player1: "{{< env PLAYER1 >}}"
-   player2: "{{< env PLAYER2 >}}"
+
 ---
 
 ```{r}
@@ -18,8 +14,8 @@ library(ggplot2)
 
 ```{r}
 df <- read_csv("dataset.csv", show_col_types = FALSE)
-df1 <- df  |> filter(name == params$player1)
-df2 <- df |> filter(name == params$player2)
+df1 <- df  |> filter(name == "player1")
+df2 <- df |> filter(name == "player2")
 ```
 
 # Player One
