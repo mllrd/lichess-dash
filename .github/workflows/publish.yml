@@ -8,10 +8,18 @@ name: Quarto Publish
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
+    env:
+      PLAYER_ONE: ${{ secrets.PLAYER_ONE}}
+      PLAYER_TWO: ${{ secrets.PLAYER_TWO}}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4 
 
+      - name: Get dataset
+        run: wget "$PATH_DATASET"
+        env: 
+          PATH_DATASET: ${{ secrets.PATH_DATASET_CSV }}
+          
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
       - name: Install R 4.4
@@ -29,9 +37,7 @@ jobs:
             any::tidyr
             any::readr
             any::ggplot2
-      - name: Get dataset
-        run: wget $PATH_DATASET_CSV
-          
+
       - name: Render and Publish
         uses: quarto-dev/quarto-actions/publish@v2
         with:
