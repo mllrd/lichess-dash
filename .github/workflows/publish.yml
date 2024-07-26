@@ -29,6 +29,8 @@ jobs:
             any::tidyr
             any::readr
             any::ggplot2
+      - name: Get dataset
+        run: wget $PATH_DATASET_CSV
           
       - name: Render and Publish
         uses: quarto-dev/quarto-actions/publish@v2

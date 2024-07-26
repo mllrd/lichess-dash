@@ -17,7 +17,7 @@ library(ggplot2)
 ```
 
 ```{r}
-df <- read_csv(params$path_dataset, show_col_types = FALSE)
+df <- read_csv("dataset.csv", show_col_types = FALSE)
 df1 <- df  |> filter(name == params$player1)
 df2 <- df |> filter(name == params$player2)
 ```
