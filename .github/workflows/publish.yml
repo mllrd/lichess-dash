@@ -25,6 +25,10 @@ jobs:
           packages:
             any::knitr
             any::rmarkdown
+            any::dplyr
+            any::tidyr
+            any::readr
+            any::ggplot2
           
       - name: Render and Publish
         uses: quarto-dev/quarto-actions/publish@v2
