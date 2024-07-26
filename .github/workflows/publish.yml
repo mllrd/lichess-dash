@@ -14,7 +14,15 @@ jobs:
 
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
-
+      
+      - name: Install knitr
+        run: |
+          Rscript -e 'install.packages("knitr")'
+      
+      - name: Install rmarkdown
+        run: |
+          Rscript -e 'install.packages("rmarkdown")'
+          
       - name: Render and Publish
         uses: quarto-dev/quarto-actions/publish@v2
         with:
