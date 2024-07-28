@@ -1,7 +1,6 @@
 ---
 title: "Дашбоард по Lichess"
 editor: visual
-format: dashboard
 ---
 
 ```{r}
@@ -13,9 +12,9 @@ library(ggplot2)
 ```
 
 ```{r}
-df <- read_csv("dataset.csv", show_col_types = FALSE)
-df1 <- df  |> filter(name == "player1")
-df2 <- df |> filter(name == "player2")
+df <- read_csv(Sys.getenv("PATH_DATAS"), show_col_types = FALSE)
+df1 <- df  |> filter(name == Sys.getenv("PLAYER1"))
+df2 <- df |> filter(name == Sys.getenv("PLAYER2"))
 ```
 
 # Player One
