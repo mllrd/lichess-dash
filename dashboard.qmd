@@ -28,7 +28,7 @@ df2 <- df |> filter(name == Sys.getenv("PLAYER2"))
 
 list(
   color = "primary",
-  value = df1 %>% select(rp_game) %>% drop_na() %>% last() %>% as.integer()
+  value = df1 |> select(rp_game) |> drop_na() |> last() |> as.integer()
 )
 
 ```
@@ -38,7 +38,7 @@ list(
 #| content: valuebox
 list(
   color = "primary",
-  value = df1 %>% select(deviation) %>% drop_na() %>% last() %>% as.numeric()
+  value = df1 |> select(deviation) |> drop_na() |> last() |> as.numeric()
 )      
   
 ```
@@ -49,7 +49,7 @@ list(
 list(
   
   color = "primary",
-  value = df1 %>% select(rp_puzzles) %>% drop_na() %>% filter(rp_puzzles >0 ) %>% last() %>% as.integer())
+  value = df1 |> select(rp_puzzles) |> drop_na() |> filter(rp_puzzles >0 ) |> last() |> as.integer())
 
 ```
 
@@ -59,7 +59,7 @@ list(
 list(
   
   color = "primary",
-  value = df1 %>% select(win_puzzles,loss_puzzles, draw_puzzles) %>% drop_na() %>% sum()
+  value = df1 |> select(win_puzzles,loss_puzzles, draw_puzzles) |> drop_na() |> sum()
 )
 ```
 
@@ -69,13 +69,13 @@ list(
 
 ```{r}
 #| title: "Рейтинг"
-df1 %>% select(rp_game, dtm) %>% drop_na() %>% ggplot(aes(dtm, rp_game)) + geom_line() +
+df1 |> select(rp_game, dtm) |> drop_na() |> ggplot(aes(dtm, rp_game)) + geom_line() +
   labs(title = "", x="", y="")
 ```
 
 ```{r}
 #| title: "Выигранные, проигранные партии и ничьи"
-df1 %>% select(ends_with("_game"), dtm) %>% drop_na() %>% pivot_longer(cols = c("win_game","loss_game", "draw_game"),values_to = "count") %>%
+df1 |> select(ends_with("_game"), dtm) |> drop_na() |> pivot_longer(cols = c("win_game","loss_game", "draw_game"),values_to = "count") |>
   ggplot(aes(dtm, count, fill = name)) +
     geom_bar(stat = "identity") +
     theme(legend.position = "none") +
@@ -86,13 +86,13 @@ df1 %>% select(ends_with("_game"), dtm) %>% drop_na() %>% pivot_longer(cols = c(
 
 ```{r}
 #| title: "Рейтинг решения задач"
-df1 %>% select(rp_puzzles, dtm) %>% drop_na() %>% filter(rp_puzzles>0) %>% ggplot(aes(dtm, rp_puzzles)) + geom_line()+
+df1 |> select(rp_puzzles, dtm) |> drop_na() |> filter(rp_puzzles>0) |> ggplot(aes(dtm, rp_puzzles)) + geom_line()+
   labs(title = "", x="", y="")
 ```
 
 ```{r}
 #| title: "Решенные и не решенные задачи"
-df1 %>% select(ends_with("_puzzles"), dtm) %>% drop_na() %>% pivot_longer(cols = c("win_puzzles","loss_puzzles", "draw_puzzles"),values_to = "count") %>%
+df1 |> select(ends_with("_puzzles"), dtm) |> drop_na() |> pivot_longer(cols = c("win_puzzles","loss_puzzles", "draw_puzzles"),values_to = "count") |>
   ggplot(aes(dtm, count, fill = name)) +
     geom_bar(stat = "identity") +
     theme(legend.position = "none") +
@@ -110,7 +110,7 @@ df1 %>% select(ends_with("_puzzles"), dtm) %>% drop_na() %>% pivot_longer(cols =
 
 list(
   color = "primary",
-  value = df2 %>% select(rp_game) %>% drop_na() %>% last() %>% as.integer()
+  value = df2 |> select(rp_game) |> drop_na() |> last() |> as.integer()
 )
 
 ```
@@ -120,7 +120,7 @@ list(
 #| content: valuebox
 list(
   color = "primary",
-  value = df2 %>% select(deviation) %>% drop_na() %>% last() %>% as.numeric()
+  value = df2 |> select(deviation) |> drop_na() |> last() |> as.numeric()
 )      
   
 ```
@@ -131,7 +131,7 @@ list(
 list(
   
   color = "primary",
-  value = df2 %>% select(rp_puzzles) %>% drop_na() %>% filter(rp_puzzles >0 ) %>% last() %>% as.integer())
+  value = df2 |> select(rp_puzzles) |> drop_na() |> filter(rp_puzzles >0 ) |> last() |> as.integer())
 
 ```
 
@@ -141,7 +141,7 @@ list(
 list(
   
   color = "primary",
-  value = df2 %>% select(win_puzzles,loss_puzzles, draw_puzzles) %>% drop_na() %>% sum()
+  value = df2 |> select(win_puzzles,loss_puzzles, draw_puzzles) |> drop_na() |> sum()
 )
 ```
 
@@ -151,8 +151,8 @@ list(
 
 ```{r}
 #| title: "Рейтинг"
-df2 %>% select(rp_game, dtm) %>%
-  drop_na() %>%
+df2 |> select(rp_game, dtm) |>
+  drop_na() |>
   ggplot(aes(dtm, rp_game)) +
   geom_line() +
   labs(title = "", x="", y="")
@@ -160,10 +160,10 @@ df2 %>% select(rp_game, dtm) %>%
 
 ```{r}
 #| title: "Выигранные, проигранные партии и ничьи"
-df2 %>% select(ends_with("_game"), dtm) %>%
-  drop_na() %>%
+df2 |> select(ends_with("_game"), dtm) |>
+  drop_na() |>
   pivot_longer(cols = c("win_game","loss_game", "draw_game"),
-               values_to = "count") %>%
+               values_to = "count") |>
   ggplot(aes(dtm, count, fill = name)) +
     geom_bar(stat = "identity") +
     theme(legend.position = "none") +
@@ -174,13 +174,13 @@ df2 %>% select(ends_with("_game"), dtm) %>%
 
 ```{r}
 #| title: "Рейтинг решения задач"
-df2 %>% select(rp_puzzles, dtm) %>% drop_na() %>% filter(rp_puzzles>0) %>% ggplot(aes(dtm, rp_puzzles)) + geom_line()+
+df2 |> select(rp_puzzles, dtm) |> drop_na() |> filter(rp_puzzles>0) |> ggplot(aes(dtm, rp_puzzles)) + geom_line()+
   labs(title = "", x="", y="")
 ```
 
 ```{r}
 #| title: "Решенные и не решенные задачи"
-df2 %>% select(ends_with("_puzzles"), dtm) %>% drop_na() %>% pivot_longer(cols = c("win_puzzles","loss_puzzles", "draw_puzzles"),values_to = "count") %>%
+df2 |> select(ends_with("_puzzles"), dtm) |> drop_na() |> pivot_longer(cols = c("win_puzzles","loss_puzzles", "draw_puzzles"),values_to = "count") |>
   ggplot(aes(dtm, count, fill = name)) +
     geom_bar(stat = "identity") +
     theme(legend.position = "none") +
