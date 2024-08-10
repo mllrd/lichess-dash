@@ -1,7 +1,7 @@
 on:
   workflow_dispatch:
-  push:
-    branches: master
+  schedule:
+    - cron: '45 1 * * *'
 
 name: Quarto Publish
 
@@ -26,9 +26,7 @@ jobs:
           packages:
             any::knitr
             any::rmarkdown
-            any::dplyr
-            any::tidyr
-            any::readr
+            any::data.table
             any::ggplot2
 
       - name: Render and Publish
