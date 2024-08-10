@@ -6,6 +6,7 @@ editor: visual
 ```{r}
 library(ggplot2)
 library(data.table)
+theme_set(theme_bw())
 ```
 
 ```{r}
@@ -202,7 +203,7 @@ df[name==Sys.getenv("PLAYER_TWO") & !is.na(rp_puzzles),
 
 ```{r}
 #| title: "Решенные и не решенные задачи"
-df[name==Sys.getenv("PLAYER_ONE") & !is.na(win_puzzles),
+df[name==Sys.getenv("PLAYER_TWO") & !is.na(win_puzzles),
    .(dtm, win_puzzles, loss_puzzles, draw_puzzles)] |>
    melt(id.vars = "dtm",
         measure.vars = patterns("puzzles") ,
