@@ -4,17 +4,24 @@ editor: visual
 ---
 
 ```{r}
-library(dplyr)
-library(readr)
-library(tidyr)
 library(ggplot2)
-
+library(data.table)
+theme_set(theme_bw())
 ```
 
 ```{r}
-df <- read_csv(Sys.getenv("PATH_DATAS"), show_col_types = FALSE)
-df1 <- df  |> filter(name == Sys.getenv("PLAYER1"))
-df2 <- df |> filter(name == Sys.getenv("PLAYER2"))
+df <- fread(Sys.getenv("PATH_DATAS"))
+rt_p1 <- df[name==Sys.getenv("PLAYER_ONE") & !is.na(rp_game), last(rp_game)]
+rt_p2 <- df[name==Sys.getenv("PLAYER_TWO") & !is.na(rp_game), last(rp_game)]
+dev_rt1 <-  df[name==Sys.getenv("PLAYER_ONE") & !is.na(deviation), last(deviation)]
+dev_rt2 <-  df[name==Sys.getenv("PLAYER_TWO") & !is.na(deviation), last(deviation)]
+rp_puz1 <- df[name==Sys.getenv("PLAYER_ONE") & !is.na(rp_puzzles), last(rp_puzzles)]
+rp_puz2 <- df[name==Sys.getenv("PLAYER_TWO") & !is.na(rp_puzzles), last(rp_puzzles)]
+
+sum_puz1 <- df[name==Sys.getenv("PLAYER_ONE") & !is.na(win_puzzles),
+               sum((win_puzzles+loss_puzzles+draw_puzzles))]
+sum_puz2 <- df[name==Sys.getenv("PLAYER_TWO") & !is.na(win_puzzles),
+               sum((win_puzzles+loss_puzzles+draw_puzzles))]
 ```
 
 # Player One
@@ -28,7 +35,7 @@ df2 <- df |> filter(name == Sys.getenv("PLAYER2"))
 
 list(
   color = "primary",
-  value = df1 |> select(rp_game) |> drop_na() |> last() |> as.integer()
+  value = rt_p1
 )
 
 ```
@@ -38,7 +45,7 @@ list(
 #| content: valuebox
 list(
   color = "primary",
-  value = df1 |> select(deviation) |> drop_na() |> last() |> as.numeric()
+  value = dev_rt1
 )      
   
 ```
@@ -49,8 +56,8 @@ list(
 list(
   
   color = "primary",
-  value = df1 |> select(rp_puzzles) |> drop_na() |> filter(rp_puzzles >0 ) |> last() |> as.integer())
-
+  value = rp_puz1
+  )
 ```
 
 ```{r}
@@ -59,8 +66,7 @@ list(
 list(
   
   color = "primary",
-  value = df1 |> select(win_puzzles,loss_puzzles, draw_puzzles) |> drop_na() |> sum()
-)
+  value = sum_puz1)
 ```
 
 ## Row
@@ -69,34 +75,47 @@ list(
 
 ```{r}
 #| title: "Рейтинг"
-df1 |> select(rp_game, dtm) |> drop_na() |> ggplot(aes(dtm, rp_game)) + geom_line() +
+df[name==Sys.getenv("PLAYER_ONE") & !is.na(rp_game), .(rp_game, dtm)] |>  ggplot(aes(dtm, rp_game)) + geom_line() +
   labs(title = "", x="", y="")
 ```
 
 ```{r}
 #| title: "Выигранные, проигранные партии и ничьи"
-df1 |> select(ends_with("_game"), dtm) |> drop_na() |> pivot_longer(cols = c("win_game","loss_game", "draw_game"),values_to = "count") |>
-  ggplot(aes(dtm, count, fill = name)) +
-    geom_bar(stat = "identity") +
-    theme(legend.position = "none") +
-  labs(title = "", x="", y="")
+df[name==Sys.getenv("PLAYER_ONE") & !is.na(win_game),
+   .(dtm, win_game, loss_game, draw_game)] |>
+   melt(id.vars = "dtm",
+        measure.vars = patterns("game") ,
+        variable.name = "name",
+        value.name = "count") |> 
+   ggplot(aes(dtm, count, fill = name)) +
+   geom_bar(stat = "identity") +
+   theme(legend.position = "none") +
+   labs(title = "", x="", y="")
 ```
 
 ### Column {.tabset}
 
 ```{r}
 #| title: "Рейтинг решения задач"
-df1 |> select(rp_puzzles, dtm) |> drop_na() |> filter(rp_puzzles>0) |> ggplot(aes(dtm, rp_puzzles)) + geom_line()+
+df[name==Sys.getenv("PLAYER_ONE") & !is.na(rp_puzzles),
+   .(rp_puzzles, dtm)] |>
+   ggplot(aes(dtm, rp_puzzles)) +
+   geom_line() +
   labs(title = "", x="", y="")
 ```
 
 ```{r}
 #| title: "Решенные и не решенные задачи"
-df1 |> select(ends_with("_puzzles"), dtm) |> drop_na() |> pivot_longer(cols = c("win_puzzles","loss_puzzles", "draw_puzzles"),values_to = "count") |>
-  ggplot(aes(dtm, count, fill = name)) +
-    geom_bar(stat = "identity") +
-    theme(legend.position = "none") +
-  labs(title = "", x="", y="")
+df[name==Sys.getenv("PLAYER_ONE") & !is.na(win_puzzles),
+   .(dtm, win_puzzles, loss_puzzles, draw_puzzles)] |>
+   melt(id.vars = "dtm",
+        measure.vars = patterns("puzzles") ,
+        variable.name = "name",
+        value.name = "count") |> 
+   ggplot(aes(dtm, count, fill = name)) +
+   geom_bar(stat = "identity") +
+   theme(legend.position = "none") +
+   labs(title = "", x="", y="")
 ```
 
 # Player Two
@@ -110,7 +129,7 @@ df1 |> select(ends_with("_puzzles"), dtm) |> drop_na() |> pivot_longer(cols = c(
 
 list(
   color = "primary",
-  value = df2 |> select(rp_game) |> drop_na() |> last() |> as.integer()
+  value = rt_p2
 )
 
 ```
@@ -120,7 +139,7 @@ list(
 #| content: valuebox
 list(
   color = "primary",
-  value = df2 |> select(deviation) |> drop_na() |> last() |> as.numeric()
+  value = dev_rt2
 )      
   
 ```
@@ -129,19 +148,16 @@ list(
 #| content: valuebox
 #| title: "Рейтинг решения задач"
 list(
-  
   color = "primary",
-  value = df2 |> select(rp_puzzles) |> drop_na() |> filter(rp_puzzles >0 ) |> last() |> as.integer())
-
+  value = rp_puz2)
 ```
 
 ```{r}
 #| content: valuebox
 #| title: "Решено задач"
 list(
-  
   color = "primary",
-  value = df2 |> select(win_puzzles,loss_puzzles, draw_puzzles) |> drop_na() |> sum()
+  value = sum_puz2
 )
 ```
 
@@ -151,38 +167,45 @@ list(
 
 ```{r}
 #| title: "Рейтинг"
-df2 |> select(rp_game, dtm) |>
-  drop_na() |>
-  ggplot(aes(dtm, rp_game)) +
-  geom_line() +
+df[name==Sys.getenv("PLAYER_TWO") & !is.na(rp_game), .(rp_game, dtm)] |>  ggplot(aes(dtm, rp_game)) + geom_line() +
   labs(title = "", x="", y="")
 ```
 
 ```{r}
 #| title: "Выигранные, проигранные партии и ничьи"
-df2 |> select(ends_with("_game"), dtm) |>
-  drop_na() |>
-  pivot_longer(cols = c("win_game","loss_game", "draw_game"),
-               values_to = "count") |>
-  ggplot(aes(dtm, count, fill = name)) +
-    geom_bar(stat = "identity") +
-    theme(legend.position = "none") +
-  labs(title = "", x="", y="")
+df[name==Sys.getenv("PLAYER_TWO") & !is.na(win_game),
+   .(dtm, win_game, loss_game, draw_game)] |>
+   melt(id.vars = "dtm",
+        measure.vars = patterns("game") ,
+        variable.name = "name",
+        value.name = "count") |> 
+   ggplot(aes(dtm, count, fill = name)) +
+   geom_bar(stat = "identity") +
+   theme(legend.position = "none") +
+   labs(title = "", x="", y="")
 ```
 
 ### Column {.tabset}
 
 ```{r}
 #| title: "Рейтинг решения задач"
-df2 |> select(rp_puzzles, dtm) |> drop_na() |> filter(rp_puzzles>0) |> ggplot(aes(dtm, rp_puzzles)) + geom_line()+
+df[name==Sys.getenv("PLAYER_TWO") & !is.na(rp_puzzles),
+   .(rp_puzzles, dtm)] |>
+   ggplot(aes(dtm, rp_puzzles)) +
+   geom_line() +
   labs(title = "", x="", y="")
 ```
 
 ```{r}
 #| title: "Решенные и не решенные задачи"
-df2 |> select(ends_with("_puzzles"), dtm) |> drop_na() |> pivot_longer(cols = c("win_puzzles","loss_puzzles", "draw_puzzles"),values_to = "count") |>
-  ggplot(aes(dtm, count, fill = name)) +
-    geom_bar(stat = "identity") +
-    theme(legend.position = "none") +
-  labs(title = "", x="", y="")
+df[name==Sys.getenv("PLAYER_TWO") & !is.na(win_puzzles),
+   .(dtm, win_puzzles, loss_puzzles, draw_puzzles)] |>
+   melt(id.vars = "dtm",
+        measure.vars = patterns("puzzles") ,
+        variable.name = "name",
+        value.name = "count") |> 
+   ggplot(aes(dtm, count, fill = name)) +
+   geom_bar(stat = "identity") +
+   theme(legend.position = "none") +
+   labs(title = "", x="", y="")
 ```
